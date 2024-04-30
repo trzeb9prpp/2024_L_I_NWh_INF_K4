@@ -1,10 +1,14 @@
-FROM python:3.9
+FROM python:3
 
-WORKDIR /app
+ARG APP_DIR=/usr/src/hello_world_printer
 
-COPY . /app
+WORKDIR /tmp
+ADD requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir -r test_requirements.txt
+RUN mkdir -p $APP_DIR
+ADD hello_world/ $APP_DIR/hello_world/
+ADD main.py $APP_DIR
 
-CMD ["python", "main.py"]
+CMD PYTHONPATH=$PYTHONPATH:/usr/src/hello_world_printer \
+      FLASK_APP=hello_world flask run --host=0.0.0.0
